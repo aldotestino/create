@@ -4,18 +4,17 @@ import requests
 import subprocess
 from time import sleep
 
+from config import token, gitHubUsername, username
+
 url = 'https://api.github.com/user/repos'
-token = 'your git hub access token'
-gitHubUsername = 'your git hub username'
-username = 'your Windows account username'
 
 try:
-    pName = sys.argv[1]
+    projectName = sys.argv[1]
     os.chdir(f"C:/Users/{username}/Desktop")
-    os.mkdir(pName)
-    os.chdir(pName)
+    os.mkdir(projectName)
+    os.chdir(projectName)
     readme = open('README.md', 'w')
-    readme.write(f"# {pName}")
+    readme.write(f"# {projectName}")
     readme.close()
 except IndexError:
     print('No arguments found, exiting...')
@@ -24,7 +23,7 @@ except FileExistsError:
     print('The project already exist on the desktop, exiting...')
     exit(1)
 
-req = requests.post(url, json={"name": pName}, headers={
+req = requests.post(url, json={"name": projectName}, headers={
     'Authorization': f"token {token}", 'content-type': 'application/json'})
 
 if req.status_code == 422:
@@ -39,7 +38,7 @@ else:
     subprocess.run('git commit -m "first commit"')
     sleep(1)
     subprocess.run(
-        f"git remote add origin https://github.com/{gitHubUsername}/{pName}.git")
+        f"git remote add origin https://github.com/{gitHubUsername}/{projectName}.git")
     sleep(1)
     subprocess.run('git push -u origin master')
     exit(0)
